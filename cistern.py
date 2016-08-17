@@ -11,5 +11,6 @@ import feedparser
 from peewee import *
 from validate import Validator
 
-
+click.clear()
 click.echo("Hello World!")
+click.pause()
