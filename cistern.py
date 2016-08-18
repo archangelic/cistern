@@ -28,7 +28,7 @@ class Feed(Model):
 
 class Torrent(Model):
     name = CharField()
-    url = CharField()
+    url = CharField(unique=True)
     feed = ForeignKeyField(Feed, related_name='torrents')
     downloaded = BooleanField(default=False)
 
@@ -54,10 +54,28 @@ def validate_url(ctx, param, value):
         return value
 
 
+# Other
+def refresh_feed(feed, downloaded=False):
+    feed_data = feedparser.parse(feed.url)
+    click.echo("Refreshing feed: " + feed.name)
+    with click.progressbar(feed_data.entries) as entries:
+        for entry in entries:
+            try:
+                torrent = Torrent(
+                    name=entry['title'],
+                    url=entry[feed.tag],
+                    feed=feed,
+                    downloaded=downloaded
+                )
+                torrent.save()
+            except IntegrityError:
+                continue
+
+
 # COMMAND LINE
 @click.group()
 def cli():
-    return True
+    pass
 
 
 @cli.command('add-feed')
@@ -69,7 +87,8 @@ def add_feed(name, url, directory):
     magnet = ''
     torrent = ''
     feed_data = feedparser.parse(url)
-    e = feed_data.entries[0]
+    entries = feed_data.entries
+    e = entries[0]
     for each in e:
         try:
             if e[each].startswith('magnet:'):
@@ -85,17 +104,26 @@ def add_feed(name, url, directory):
         tag = torrent
 
     if not directory:
-        if click.confirm("Would you like to set a download directory?"):
+        if click.confirm("Would you like to set a download directory for this feed?"):
             directory = click.prompt("Enter absolute path to directory")
 
-    if tag:
-        if directory:
-            feed = Feed(name=name, url=url, tag=tag, download_dir=directory)
-            feed.save()
-        else:
-            feed = Feed(name=name, url=url, tag=tag)
-            feed.save()
+    if directory and tag:
+        feed = Feed(name=name, url=url, tag=tag, download_dir=directory)
+        feed.save()
+    elif tag:
+        feed = Feed(name=name, url=url, tag=tag)
+        feed.save()
 
+    if click.confirm("Mark all entries as downloaded?"):
+        refresh_feed(feed, downloaded=True)
+    else:
+        refresh_feed(feed)
+
+
+@cli.command()
+def refresh():
+    for feed in Feed.select():
+        refresh_feed(feed)
 
 if __name__ == '__main__':
     cli()
