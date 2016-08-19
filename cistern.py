@@ -7,6 +7,7 @@ import click
 from configobj import ConfigObj
 import feedparser
 from peewee import *
+from tabulate import tabulate
 from validate import Validator
 
 cistern_folder = os.path.join(os.environ['HOME'], '.cistern')
@@ -124,6 +125,43 @@ def add_feed(name, url, directory):
 def refresh():
     for feed in Feed.select():
         refresh_feed(feed)
+
+
+@cli.command('list')
+@click.argument('list_type')
+def lister(list_type):
+    list_type = list_type.lower().strip()
+    if list_type == 'feeds':
+        feeds = Feed.select()
+        feed_list = []
+        for feed in feeds:
+            if feed.enabled:
+                enabled = 'Yes'
+            else:
+                enabled = "No"
+            feed_list.append([feed.id, feed.name, feed.url, enabled])
+        tab = tabulate(
+            feed_list,
+            ['ID', 'Name', 'URL', 'Enabled']
+        )
+        click.echo(tab)
+    elif list_type == 'torrents':
+        torrents = Torrent.select()
+        torrent_list = []
+        for torrent in torrents:
+            if torrent.downloaded:
+                downloaded = 'Yes'
+            else:
+                downloaded = 'No'
+            torrent_list.append([torrent.id, torrent.name, torrent.feed.name, downloaded])
+        tab = tabulate(
+            torrent_list,
+            ['ID', 'Name', 'Feed', 'Downloaded']
+        )
+        click.echo(tab)
+    else:
+        raise click.BadParameter("Please choose 'feeds' or 'torrents'")
+
 
 if __name__ == '__main__':
     cli()
