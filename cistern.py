@@ -36,7 +36,7 @@ class Torrent(Model):
     class Meta:
         database = db
 
-# Connection to Database
+# Connection to Database and set up files
 if not os.path.isdir(cistern_folder):
     os.mkdir(cistern_folder)
 
@@ -45,6 +45,9 @@ if not os.path.isfile(os.path.join(cistern_folder, 'cistern.db')):
     db.create_tables([Feed, Torrent])
 elif os.path.isfile(os.path.join(cistern_folder, 'cistern.db')):
     db.connect()
+
+config = ConfigObj(os.path.join(cistern_folder, 'config'))
+
 
 
 # VALIDATION
@@ -161,6 +164,25 @@ def lister(list_type):
         click.echo(tab)
     else:
         raise click.BadParameter("Please choose 'feeds' or 'torrents'")
+
+@cli.command()
+def setup():
+    click.clear()
+    click.echo('Welcome to Cistern\n\n')
+    click.echo("Transmission Information")
+    config['url'] = click.prompt("URL", default='localhost')
+    config['port'] = click.prompt("Port", default=9091)
+    if click.confirm("Requires username and password?"):
+        config['require_auth'] = True
+        config['username'] = click.prompt("Username")
+        config['password'] = click.prompt("Password")
+    else:
+        config['require_auth'] = False
+        config['username'] = ''
+        config['password'] = ''
+    config.write()
+    click.clear()
+    click.echo("Successfully set up!\nUse the 'add-feed' command to add your first RSS feed.")
 
 
 if __name__ == '__main__':
