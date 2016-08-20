@@ -59,7 +59,6 @@ elif os.path.isfile(os.path.join(cistern_folder, 'cistern.db')):
 config = ConfigObj(os.path.join(cistern_folder, 'config'))
 
 
-
 # VALIDATION
 def validate_url(ctx, param, value):
     if not value.startswith(('http://', 'https://')):
@@ -105,7 +104,7 @@ def cistern():
         click.echo('Downloading torrents:')
         torrent_list = feed.torrents.select().where(Torrent.downloaded == False)
         if torrent_list:
-            with click.progressbar(torrents) as torrents:
+            with click.progressbar(torrent_list) as torrents:
                 transmission_args = {}
                 if feed.download_dir:
                     transmission_args['download_dir'] = feed.download_dir
@@ -209,6 +208,7 @@ def lister(list_type):
     else:
         raise click.BadParameter("Please choose 'feeds' or 'torrents'")
 
+
 @cli.command()
 def setup():
     click.clear()
@@ -230,13 +230,13 @@ def setup():
 
 
 @cli.command('disable-feed')
-@click.argument('id')
-def disable_feed(id):
+@click.argument('feed_id')
+def disable_feed(feed_id):
     try:
         int(id)
     except ValueError:
         raise click.BadParameter('Please enter a valid feed id')
-    feed = Feed.get(Feed.id == id)
+    feed = Feed.get(Feed.id == feed_id)
     if feed:
         if feed.enabled:
             feed.disable()
@@ -248,13 +248,13 @@ def disable_feed(id):
 
 
 @cli.command('enable-feed')
-@click.argument('id')
-def enable_feed(id):
+@click.argument('feed_id')
+def enable_feed(feed_id):
     try:
         int(id)
     except ValueError:
         raise click.BadParameter('Please enter a valid feed id')
-    feed = Feed.get(Feed.id == id)
+    feed = Feed.get(Feed.id == feed_id)
     if feed:
         if not feed.enabled:
             feed.enable()
