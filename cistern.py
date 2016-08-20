@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import datetime
 import os
 
 import click
@@ -8,7 +7,7 @@ from configobj import ConfigObj
 import feedparser
 from peewee import *
 from tabulate import tabulate
-from validate import Validator
+import transmissionrpc
 
 cistern_folder = os.path.join(os.environ['HOME'], '.cistern')
 db = SqliteDatabase(os.path.join(cistern_folder, 'cistern.db'))
@@ -19,7 +18,6 @@ class Feed(Model):
     name = CharField()
     url = CharField()
     download_dir = CharField(default='')
-    last_checked = DateTimeField(default=datetime.datetime.now)
     tag = CharField()
     enabled = BooleanField(default=True)
 
@@ -35,6 +33,10 @@ class Torrent(Model):
 
     class Meta:
         database = db
+
+    def set_downloaded(self):
+        self.downloaded = True
+        self.save()
 
 # Connection to Database and set up files
 if not os.path.isdir(cistern_folder):
@@ -76,10 +78,44 @@ def refresh_feed(feed, downloaded=False):
                 continue
 
 
+def cistern():
+    if config['require_auth']:
+        tremote = transmissionrpc.Client(
+            address=config['url'],
+            port=int(config['port']),
+            user=config['username'],
+            password=config['password']
+        )
+    else:
+        tremote = transmissionrpc.Client(
+            address=config['url'],
+            port=int(config['port'])
+        )
+    click.clear()
+    for feed in Feed.select().where(Feed.enabled == True):
+        refresh_feed(feed)
+        click.echo('Downloading torrents:')
+        torrent_list = feed.torrents.select().where(Torrent.downloaded == False)
+        if torrent_list:
+            with click.progressbar(torrents) as torrents:
+                transmission_args = {}
+                if feed.download_dir:
+                    transmission_args['download_dir'] = feed.download_dir
+                for torrent in torrents:
+                    tremote.add_torrent(torrent.url, **transmission_args)
+                    torrent.set_downloaded()
+        else:
+            click.echo("No torrents to download in this feed")
+
+
 # COMMAND LINE
-@click.group()
-def cli():
-    pass
+@click.group(invoke_without_command=True)
+@click.pass_context
+def cli(ctx):
+    if ctx.invoked_subcommand is None:
+        cistern()
+    else:
+        pass
 
 
 @cli.command('add-feed')
