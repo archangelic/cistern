@@ -24,6 +24,14 @@ class Feed(Model):
     class Meta:
         database = db
 
+    def enable(self):
+        self.enabled = True
+        self.save()
+
+    def disable(self):
+        self.enabled = False
+        self.save()
+
 
 class Torrent(Model):
     name = CharField()
@@ -219,6 +227,42 @@ def setup():
     config.write()
     click.clear()
     click.echo("Successfully set up!\nUse the 'add-feed' command to add your first RSS feed.")
+
+
+@cli.command('disable-feed')
+@click.argument('id')
+def disable_feed(id):
+    try:
+        int(id)
+    except ValueError:
+        raise click.BadParameter('Please enter a valid feed id')
+    feed = Feed.get(Feed.id == id)
+    if feed:
+        if feed.enabled:
+            feed.disable()
+            click.echo(feed.name + " disabled!")
+        else:
+            click.echo(feed.name + ' is already disabled!')
+    else:
+        click.echo('Please enter a valid feed id')
+
+
+@cli.command('enable-feed')
+@click.argument('id')
+def enable_feed(id):
+    try:
+        int(id)
+    except ValueError:
+        raise click.BadParameter('Please enter a valid feed id')
+    feed = Feed.get(Feed.id == id)
+    if feed:
+        if not feed.enabled:
+            feed.enable()
+            click.echo(feed.name + " enabled!")
+        else:
+            click.echo(feed.name + ' is already enabled!')
+    else:
+        click.echo('Please enter a valid feed id')
 
 
 if __name__ == '__main__':
