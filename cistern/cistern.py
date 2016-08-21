@@ -125,10 +125,10 @@ def cli(ctx):
         pass
 
 
-@cli.command('add-feed')
-@click.option('--name', prompt=True)
-@click.option('--url', callback=validate_url, prompt=True)
-@click.option('--directory', default=None)
+@cli.command('add-feed', help='Adds a feed of torrents')
+@click.option('--name', prompt=True, help='Name of feed (for your reference)')
+@click.option('--url', callback=validate_url, prompt=True, help='URL to feed')
+@click.option('--directory', default=None, help='Custom download directory')
 def add_feed(name, url, directory):
     tag = ''
     magnet = ''
@@ -167,13 +167,13 @@ def add_feed(name, url, directory):
         refresh_feed(feed)
 
 
-@cli.command()
+@cli.command(help='Refreshes feed and caches torrents to download later')
 def refresh():
     for feed in Feed.select():
         refresh_feed(feed)
 
 
-@cli.command('list')
+@cli.command('list', help='Lists either feeds or torrents')
 @click.argument('list_type')
 def lister(list_type):
     list_type = list_type.lower().strip()
@@ -209,7 +209,7 @@ def lister(list_type):
         raise click.BadParameter("Please choose 'feeds' or 'torrents'")
 
 
-@cli.command()
+@cli.command(help='Runs setup for connection to Transmission')
 def setup():
     click.clear()
     click.echo('Welcome to Cistern\n\n')
@@ -229,7 +229,7 @@ def setup():
     click.echo("Successfully set up!\nUse the 'add-feed' command to add your first RSS feed.")
 
 
-@cli.command('disable-feed')
+@cli.command('disable-feed', help='Disables feed from adding new torrents')
 @click.argument('feed_id')
 def disable_feed(feed_id):
     try:
@@ -247,7 +247,7 @@ def disable_feed(feed_id):
         click.echo('Please enter a valid feed id')
 
 
-@cli.command('enable-feed')
+@cli.command('enable-feed', help='Enables feed to add torrents')
 @click.argument('feed_id')
 def enable_feed(feed_id):
     try:
