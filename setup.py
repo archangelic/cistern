@@ -6,7 +6,7 @@ setup(
     version="0.1.0",
     license="MIT",
     url="https://github.com/archangelic/cistern",
-    description=("Command line tool for downloading torrents from RSS feeds."),
+    description="Command line tool for downloading torrents from RSS feeds.",
     author="Michael Hancock",
     author_email="michaelhancock89@gmail.com",
     download_url=(
@@ -36,8 +36,6 @@ setup(
         'Topic :: Internet',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Natural Language :: English',
-        'Operating System :: POSIX :: Linux',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',

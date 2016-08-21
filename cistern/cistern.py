@@ -135,7 +135,10 @@ def add_feed(name, url, directory):
     torrent = ''
     feed_data = feedparser.parse(url)
     entries = feed_data.entries
-    e = entries[0]
+    try:
+        e = entries[0]
+    except IndexError:
+        raise click.BadParameter("No entries found for this feed. Please check the URL and try again.")
     for each in e:
         try:
             if e[each].startswith('magnet:'):
@@ -185,10 +188,10 @@ def lister(list_type):
                 enabled = 'Yes'
             else:
                 enabled = "No"
-            feed_list.append([feed.id, feed.name, feed.url, enabled])
+            feed_list.append([feed.id, feed.name, feed.url, feed.download_dir, enabled])
         tab = tabulate(
             feed_list,
-            ['ID', 'Name', 'URL', 'Enabled']
+            ['ID', 'Name', 'URL', 'Download Directory', 'Enabled']
         )
         click.echo(tab)
     elif list_type == 'torrents':
