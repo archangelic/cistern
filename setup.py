@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name="cistern",
-    version="0.1.0",
+    version="0.1.1",
     license="MIT",
     url="https://github.com/archangelic/cistern",
     description="Command line tool for downloading torrents from RSS feeds.",

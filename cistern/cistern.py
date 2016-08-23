@@ -236,7 +236,7 @@ def setup():
 @click.argument('feed_id')
 def disable_feed(feed_id):
     try:
-        int(id)
+        int(feed_id)
     except ValueError:
         raise click.BadParameter('Please enter a valid feed id')
     feed = Feed.get(Feed.id == feed_id)
@@ -254,7 +254,7 @@ def disable_feed(feed_id):
 @click.argument('feed_id')
 def enable_feed(feed_id):
     try:
-        int(id)
+        int(feed_id)
     except ValueError:
         raise click.BadParameter('Please enter a valid feed id')
     feed = Feed.get(Feed.id == feed_id)
