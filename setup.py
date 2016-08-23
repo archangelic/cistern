@@ -10,7 +10,7 @@ setup(
     author="Michael Hancock",
     author_email="michaelhancock89@gmail.com",
     download_url=(
-        "https://github.com/archangelic/cistern/archive/v0.1.0.tar.gz"
+        "https://github.com/archangelic/cistern/archive/v0.1.1.tar.gz"
     ),
     install_requires=[
         'click',
