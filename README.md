@@ -40,7 +40,7 @@ At this point, you are ready to run cistern. Running `cistern` by itself will in
 Cistern's list command can list all the feeds or torrents it has. It takes one argument of either `feeds` or `torrents`.
 You can use this command to get IDs for the `enable-feed` or `disable-feed` commands.
 ```
-$ citern list feeds
+$ cistern list feeds
   ID  Name      URL                          Download Directory           Enabled
 ----  --------  ---------------------------  ---------------------------  ---------
    1  Test RSS  http://example.com/feed.rss  /absolute/path/to/directory  Yes
