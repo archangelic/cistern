@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Cistern by archangelic</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/archangelic/cistern">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/archangelic/cistern/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/archangelic/cistern/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Cistern</h1>
+          <p>Command line tool for downloading torrents from RSS feeds. </p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/archangelic">archangelic</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h1>
+
+<pre><code>pip install cistern
+</code></pre>
+
+<p>or</p>
+
+<pre><code>$ git clone https://github.com/archangelic/cistern
+$ cd cistern
+$ python setup.py install
+</code></pre>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h1>
+
+<h2>
+<a id="setting-up-transmission" class="anchor" href="#setting-up-transmission" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Setting up Transmission</h2>
+
+<p>Before you run <code>cistern</code> you need to set up the connection to Transmission:</p>
+
+<pre><code>$ cistern setup
+</code></pre>
+
+<p>This will prompt you for the url, and port of your Transmission remote connection, as well as if it requires username and password.</p>
+
+<h2>
+<a id="adding-feeds" class="anchor" href="#adding-feeds" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Adding Feeds</h2>
+
+<p>Once you are done setting up the connection to Transmission, you will need to add your first feed:</p>
+
+<pre><code>$ cistern add-feed
+</code></pre>
+
+<p>This will take you through some steps to set up the feed. It will ask you to give it a name, give the url, and it will give the option to supply a custom download directory for this feed.  </p>
+
+<p>Optionally, you can supply these values with options:</p>
+
+<pre><code>$ cistern add-feed --name "Test RSS" --url "http://example.com/feed.rss" --download-dir /absolute/path/to/directory
+</code></pre>
+
+<p><code>--name</code> and <code>--url</code> are required to create the feed entry. If no <code>--download-dir</code> is supplied, torrents from that feed will be downloaded to Transmission's default download directory.</p>
+
+<h2>
+<a id="running-cistern" class="anchor" href="#running-cistern" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Running Cistern</h2>
+
+<p>At this point, you are ready to run cistern. Running <code>cistern</code> by itself will initiate a refresh of all feeds and add all previously undownloaded torrents to Transmission</p>
+
+<h2>
+<a id="listing-feeds-and-torrents" class="anchor" href="#listing-feeds-and-torrents" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Listing Feeds and Torrents</h2>
+
+<p>Cistern's list command can list all the feeds or torrents it has. It takes one argument of either <code>feeds</code> or <code>torrents</code>.
+You can use this command to get IDs for the <code>enable-feed</code> or <code>disable-feed</code> commands.</p>
+
+<pre><code>$ cistern list feeds
+  ID  Name      URL                          Download Directory           Enabled
+----  --------  ---------------------------  ---------------------------  ---------
+   1  Test RSS  http://example.com/feed.rss  /absolute/path/to/directory  Yes
+</code></pre>
+
+<h2>
+<a id="enabling-and-disabling-feeds" class="anchor" href="#enabling-and-disabling-feeds" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Enabling and Disabling Feeds</h2>
+
+<p>If you know the ID to your RSS feed, you can choose to enable it or disable it using the <code>disable-feed</code> or <code>enable-feed</code> commands.</p>
+
+<pre><code>$ cistern disable-feed 1
+Test RSS disabled!
+
+$ cistern enable-feed 1
+Test RSS enabled!
+</code></pre>
+
+<h2>
+<a id="refreshing-feeds" class="anchor" href="#refreshing-feeds" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Refreshing feeds</h2>
+
+<p>If you want to just read the feeds to refresh the cache of torrents, simply run this command</p>
+
+<pre><code>$ cistern refresh
+</code></pre>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
