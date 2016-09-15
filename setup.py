@@ -3,14 +3,14 @@ from setuptools import setup
 
 setup(
     name="cistern",
-    version="0.1.1",
+    version="0.1.2",
     license="MIT",
     url="https://github.com/archangelic/cistern",
     description="Command line tool for downloading torrents from RSS feeds.",
     author="Michael Hancock",
     author_email="michaelhancock89@gmail.com",
     download_url=(
-        "https://github.com/archangelic/cistern/archive/v0.1.1.tar.gz"
+        "https://github.com/archangelic/cistern/archive/v0.1.2.tar.gz"
     ),
     install_requires=[
         'click',

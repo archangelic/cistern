@@ -86,18 +86,6 @@ def refresh_feed(feed, downloaded=False):
 
 
 def cistern():
-    if config['require_auth']:
-        tremote = transmissionrpc.Client(
-            address=config['url'],
-            port=int(config['port']),
-            user=config['username'],
-            password=config['password']
-        )
-    else:
-        tremote = transmissionrpc.Client(
-            address=config['url'],
-            port=int(config['port'])
-        )
     click.clear()
     for feed in Feed.select().where(Feed.enabled == True):
         refresh_feed(feed)
@@ -109,8 +97,23 @@ def cistern():
                 if feed.download_dir:
                     transmission_args['download_dir'] = feed.download_dir
                 for torrent in torrents:
-                    tremote.add_torrent(torrent.url, **transmission_args)
-                    torrent.set_downloaded()
+                    try:
+                        if config['require_auth']:
+                            tremote = transmissionrpc.Client(
+                                address=config['url'],
+                                port=int(config['port']),
+                                user=config['username'],
+                                password=config['password']
+                            )
+                        else:
+                            tremote = transmissionrpc.Client(
+                                address=config['url'],
+                                port=int(config['port'])
+                            )
+                        tremote.add_torrent(torrent.url, **transmission_args)
+                        torrent.set_downloaded()
+                    except transmissionrpc.error.TransmissionError:
+                        click.echo("Saving " + torrent.name + " for later")
         else:
             click.echo("No torrents to download in this feed")
 
