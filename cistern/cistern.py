@@ -87,6 +87,7 @@ def refresh_feed(feed, downloaded=False):
 
 def cistern():
     click.clear()
+    failed_torrents = []
     for feed in Feed.select().where(Feed.enabled == True):
         refresh_feed(feed)
         click.echo('Downloading torrents:')
@@ -113,9 +114,13 @@ def cistern():
                         tremote.add_torrent(torrent.url, **transmission_args)
                         torrent.set_downloaded()
                     except transmissionrpc.error.TransmissionError:
-                        click.echo("Saving " + torrent.name + " for later")
+                        failed_torrents.append(torrent.name)
         else:
             click.echo("No torrents to download in this feed")
+    if failed_torrents:
+        click.echo("Failed to download torrents. Saving to download later:", err=True)
+        for torrent_name in failed_torrents:
+            click.echo(torrent_name, err=True)
 
 
 # COMMAND LINE
