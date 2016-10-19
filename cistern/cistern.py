@@ -9,7 +9,7 @@ from peewee import *
 from tabulate import tabulate
 import transmissionrpc
 
-cistern_folder = os.path.join(os.environ['HOME'], '.cistern')
+cistern_folder = os.getenv('CISTERNHOME', os.path.join(os.environ['HOME'], '.cistern'))
 db = SqliteDatabase(os.path.join(cistern_folder, 'cistern.db'))
 
 
