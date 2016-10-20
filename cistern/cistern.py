@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import datetime
 import os
 
 import click
@@ -9,7 +10,9 @@ from peewee import *
 from tabulate import tabulate
 import transmissionrpc
 
-cistern_folder = os.path.join(os.environ['HOME'], '.cistern')
+import migrations
+
+cistern_folder = os.getenv('CISTERNHOME', os.path.join(os.environ['HOME'], '.cistern'))
 db = SqliteDatabase(os.path.join(cistern_folder, 'cistern.db'))
 
 
@@ -38,6 +41,7 @@ class Torrent(Model):
     url = CharField(unique=True)
     feed = ForeignKeyField(Feed, related_name='torrents')
     downloaded = BooleanField(default=False)
+    date_added = DateTimeField(default=datetime.datetime.now)
 
     class Meta:
         database = db
@@ -55,6 +59,12 @@ if not os.path.isfile(os.path.join(cistern_folder, 'cistern.db')):
     db.create_tables([Feed, Torrent])
 elif os.path.isfile(os.path.join(cistern_folder, 'cistern.db')):
     db.connect()
+
+# Check if migration is necessary
+try:
+    t = Torrent.select().first()
+except OperationalError:
+    migrations.update()
 
 config = ConfigObj(os.path.join(cistern_folder, 'config'))
 
@@ -210,10 +220,10 @@ def lister(list_type):
                 downloaded = 'Yes'
             else:
                 downloaded = 'No'
-            torrent_list.append([torrent.id, torrent.name, torrent.feed.name, downloaded])
+            torrent_list.append([torrent.id, torrent.name, torrent.feed.name, downloaded, torrent.date_added])
         tab = tabulate(
             torrent_list,
-            ['ID', 'Name', 'Feed', 'Downloaded']
+            ['ID', 'Name', 'Feed', 'Downloaded', 'Date Added']
         )
         click.echo(tab)
     else:
