@@ -7,14 +7,14 @@ if not sys.version_info[0] == 3:
 
 setup(
     name="cistern",
-    version="0.1.4",
+    version="0.1.5",
     license="MIT",
     url="https://github.com/archangelic/cistern",
     description="Command line tool for downloading torrents from RSS feeds.",
     author="Michael Hancock",
     author_email="michaelhancock89@gmail.com",
     download_url=(
-        "https://github.com/archangelic/cistern/archive/v0.1.4.tar.gz"
+        "https://github.com/archangelic/cistern/archive/v0.1.5.tar.gz"
     ),
     install_requires=[
         'click',
