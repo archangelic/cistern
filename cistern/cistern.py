@@ -220,7 +220,8 @@ def lister(list_type):
                 downloaded = 'Yes'
             else:
                 downloaded = 'No'
-            torrent_list.append([torrent.id, torrent.name, torrent.feed.name, downloaded, torrent.date_added])
+            date_added = datetime.datetime.strftime(torrent.date_added, "%m-%d-%Y %H:%M:%S")
+            torrent_list.append([torrent.id, torrent.name, torrent.feed.name, downloaded, date_added])
         tab = tabulate(
             torrent_list,
             ['ID', 'Name', 'Feed', 'Downloaded', 'Date Added']
